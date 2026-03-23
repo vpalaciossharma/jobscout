@@ -573,6 +573,25 @@ def main():
 
     print(f"  → {len(scored)} jobs passed scoring threshold")
 
+    # ── Save top jobs for resume tailoring ────────────────────────────────────
+    top_jobs_for_tailor = [
+        {
+            "score": s,
+            "job_title": j.get("job_title", ""),
+            "employer_name": j.get("employer_name", ""),
+            "job_description": j.get("job_description", ""),
+            "job_apply_link": j.get("job_apply_link", ""),
+            "job_city": j.get("job_city", ""),
+            "job_state": j.get("job_state", ""),
+            "job_is_remote": j.get("job_is_remote", False),
+        }
+        for s, j, _ in scored if s >= 50
+    ]
+    top_jobs_path = SCRIPT_DIR / "top_jobs.json"
+    with open(top_jobs_path, "w") as f:
+        json.dump(top_jobs_for_tailor, f, indent=2)
+    print(f"  → {len(top_jobs_for_tailor)} top jobs (50+) saved to top_jobs.json")
+
     # ── Build email ───────────────────────────────────────────────────────────
     html = build_email_html(scored, today_str)
     subject = f"🔍 Job Scout: {len(scored)} Senior PM Role{'s' if len(scored) != 1 else ''} · {today_short}"
