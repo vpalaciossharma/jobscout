@@ -3,10 +3,8 @@ name: Job Scout Daily Alert
 on:
   schedule:
     # Runs at 14:00 UTC daily = 7:00 AM PDT (UTC-7)
-    # Note: during PST (Nov–Mar) this fires at 6:00 AM instead of 7:00 AM
     - cron: '0 14 * * *'
   workflow_dispatch:
-    # Allows you to trigger a manual run from the GitHub Actions tab
 
 jobs:
   run-job-scout:
@@ -31,13 +29,17 @@ jobs:
             "rapidapi_key": "${{ secrets.RAPIDAPI_KEY }}",
             "gmail_address": "${{ secrets.GMAIL_ADDRESS }}",
             "gmail_app_password": "${{ secrets.GMAIL_APP_PASSWORD }}",
-            "recipient_email": "${{ secrets.RECIPIENT_EMAIL }}"
+            "recipient_email": "${{ secrets.RECIPIENT_EMAIL }}",
+            "anthropic_api_key": "${{ secrets.ANTHROPIC_API_KEY }}"
           }
           EOF
 
-      - name: Run Job Scout
+      - name: Run Job Scout (fetch + score + email digest)
         run: python job_scout.py
 
-      - name: Clean up config (remove secrets from runner)
+      - name: Run Resume Tailor (tailor + email attachments)
+        run: python resume_tailor.py
+
+      - name: Clean up config
         if: always()
         run: rm -f config.json
