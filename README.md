@@ -1,3 +1,7 @@
+
+# JobScout
+
+JobScout is an automated job discovery and resume tailoring system that fetches relevant jobs, scores them intelligently, and generates AI-tailored resumes.
 ## Tech Stack
 
 **Core Language:**
